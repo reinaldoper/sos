@@ -54,13 +54,13 @@ export default function LoginScreen() {
 
   return (
     <ImageBackground
-      source={require('../assets/images/unnamed.jpg')}
+      source={require('../assets/images/sos.jpeg')}
       resizeMode="cover"
       style={styles.image}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboard}>
-        <View className="w-full max-w-md bg-white rounded-lg p-6 shadow-lg">
+        <View className="w-full max-w-md bg-lime-400 rounded-lg p-6 shadow-lg">
         <LottieView
           autoPlay
           loop
