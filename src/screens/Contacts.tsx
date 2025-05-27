@@ -7,6 +7,7 @@ import {
   Platform,
   TouchableOpacity,
   Linking,
+  TextInput,
 } from 'react-native';
 import Contacts from 'react-native-contacts';
 import Geolocation from '@react-native-community/geolocation';
@@ -17,11 +18,13 @@ import LogoutButton from '../components/LogoutButton';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useTasks} from '../hooks/useTask';
 import {Contact} from '../types/types';
-import { MSG_CONTACTS } from '../constants/constants';
+import {MSG_CONTACTS} from '../constants/constants';
 import PressableComponent from '../components/Pressable';
 
 export default function ContactsScreens() {
   const [contacts, setContacts] = useState<Contact[] | null>([]);
+  const [nameSearch, setNameSearch] = useState<string>('');
+  const [allContacts, setAllContacts] = useState<Contact[]>([]);
 
   const {addLocation} = useTasks();
 
@@ -42,6 +45,17 @@ export default function ContactsScreens() {
     return true;
   };
 
+  const handleSearch = () => {
+    if (!nameSearch.trim()) {
+      setContacts(allContacts);
+      return;
+    }
+    const filteredContacts = allContacts.filter(contact =>
+      contact.displayName?.toLowerCase().includes(nameSearch.toLowerCase()),
+    );
+    setContacts(filteredContacts);
+  };
+
   useEffect(() => {
     const loadContacts = async () => {
       const granted = await requestPermissions();
@@ -52,6 +66,7 @@ export default function ContactsScreens() {
 
       const list = await Contacts.getAll();
       setContacts(list);
+      setAllContacts(list);
     };
     loadContacts();
   }, []);
@@ -79,6 +94,14 @@ export default function ContactsScreens() {
       <PressableComponent />
       <View className="flex-1 p-5 pt-12 bg-white">
         <Text className="text-2xl font-bold mb-5">Contatos</Text>
+        <TextInput
+          value={nameSearch}
+          onChangeText={setNameSearch}
+          onSubmitEditing={handleSearch}
+          placeholder="Buscar contato"
+          returnKeyType="search"
+          className="border border-gray-300 rounded-lg px-4 py-2 mb-4"
+        />
         <ScrollView className="flex-1 bg-blue-300 rounded-xl p-4">
           {contacts && contacts.length > 0 ? (
             contacts.map(item => {
